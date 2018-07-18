@@ -64,6 +64,7 @@ namespace MonoGame.Extended.Tiled
         {
 			TiledMapTileset tileset;
 			var external = reader.ReadBoolean();
+
 			if (external)
 				tileset = reader.ReadExternalReference<TiledMapTileset>();
 			else

@@ -26,11 +26,15 @@ namespace Pong.Screens
         private int _leftScore;
         private int _rightScore;
         private readonly FastRandom _random = new FastRandom();
-        private Tweener _tweener = new Tweener();
+        private readonly Tweener _tweener = new Tweener();
+        private readonly MouseService _mouseService;
+        private readonly KeyboardService _keyboardService;
 
-        public PongGameScreen(Game game)
+        public PongGameScreen(Game game, KeyboardService keyboardService, MouseService mouseService)
             : base(game)
         {
+            _keyboardService = keyboardService;
+            _mouseService = mouseService;
             game.IsMouseVisible = false;
         }
 
@@ -75,13 +79,14 @@ namespace Pong.Screens
         public override void Update(GameTime gameTime)
         {
             var elapsedSeconds = gameTime.GetElapsedSeconds();
-            var mouseState = MouseExtended.GetState();
-            var keyboardState = KeyboardExtended.GetState();
 
-            if (keyboardState.WasKeyJustDown(Keys.Escape))
-                ScreenManager.LoadScreen(new TitleScreen(Game), new ExpandTransition(GraphicsDevice, Color.Black));
+            _mouseService.Update(gameTime);
+            _keyboardService.Update(gameTime);
 
-            MovePaddlePlayer(mouseState);
+            if (_keyboardService.WasKeyJustDown(Keys.Escape))
+                ScreenManager.LoadScreen(new TitleScreen(Game, _keyboardService, _mouseService), new ExpandTransition(GraphicsDevice, Color.Black));
+
+            MovePaddlePlayer(_mouseService.CurrentMouseState);
 
             MovePaddleAi(_redPaddle, elapsedSeconds);
 
@@ -134,7 +139,7 @@ namespace Pong.Screens
             _spriteBatch.DrawString(_font, $"{_rightScore:00}", new Vector2(430, 10), new Color(0.2f, 0.2f, 0.2f), 0, Vector2.Zero, Vector2.One * 4f, SpriteEffects.None, 0);
         }
 
-        private void MovePaddlePlayer(MouseStateExtended mouseState)
+        private void MovePaddlePlayer(MouseState mouseState)
         {
             _bluePaddle.Position.Y = mouseState.Position.Y;
         }

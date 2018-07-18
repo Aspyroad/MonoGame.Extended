@@ -2,14 +2,13 @@
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 using MonoGame.Extended.Tiled;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using MonoGame.Extended.Tiled.Serialization;
 
 namespace MonoGame.Extended.Content.Pipeline.Tiled
 {
 	[ContentTypeWriter]
-	class TiledMapTilesetWriter : ContentTypeWriter<TiledMapTilesetContent>
+	public class TiledMapTilesetWriter : ContentTypeWriter<TiledMapTilesetContent>
 	{
 		public override string GetRuntimeReader(TargetPlatform targetPlatform) 
 			=> "MonoGame.Extended.Tiled.TiledMapTilesetReader, MonoGame.Extended.Tiled";
@@ -32,7 +31,8 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
 		public static void WriteTileset(ContentWriter writer, TiledMapTilesetContent tileset)
 		{
-			writer.WriteExternalReference(tileset.Image.ContentRef);
+            // TODO: What the heck to do here?
+			//writer.WriteExternalReference(tileset.Image.ContentRef);
             writer.Write(tileset.TileWidth);
             writer.Write(tileset.TileHeight);
             writer.Write(tileset.TileCount);
@@ -73,15 +73,15 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
             writer.Write((byte)type);
 
-            writer.Write(@object.Identifier);
+            writer.Write(@object.Identifier ?? 0);
             writer.Write(@object.Name ?? string.Empty);
             writer.Write(@object.Type ?? string.Empty);
-            writer.Write(@object.X);
-            writer.Write(@object.Y);
-            writer.Write(@object.Width);
-            writer.Write(@object.Height);
-            writer.Write(@object.Rotation);
-            writer.Write(@object.Visible);
+            writer.Write(@object.X ?? 0f);
+            writer.Write(@object.Y ?? 0f);
+            writer.Write(@object.Width ?? 0f);
+            writer.Write(@object.Height ?? 0f);
+            writer.Write(@object.Rotation ?? 0f);
+            writer.Write(@object.Visible ?? true);
 
             writer.WriteTiledMapProperties(@object.Properties);
 
@@ -91,7 +91,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
                 case TiledMapObjectType.Ellipse:
                     break;
                 case TiledMapObjectType.Tile:
-                    writer.Write(@object.GlobalIdentifier);
+                    writer.Write(@object.GlobalIdentifier ?? 0); // TODO: Zero default value, really?
                     break;
                 case TiledMapObjectType.Polygon:
                     WritePolyPoints(writer, @object.Polygon.Points);

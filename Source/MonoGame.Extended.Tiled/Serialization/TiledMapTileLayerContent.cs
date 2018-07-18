@@ -1,7 +1,6 @@
 using System.Xml.Serialization;
-using MonoGame.Extended.Tiled;
 
-namespace MonoGame.Extended.Content.Pipeline.Tiled
+namespace MonoGame.Extended.Tiled.Serialization
 {
     public class TiledMapTileLayerContent : TiledMapLayerContent
     {
@@ -20,8 +19,8 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
         [XmlElement(ElementName = "data")]
         public TiledMapTileLayerDataContent Data { get; set; }
 
-        [XmlIgnore]
-        public TiledMapTile[] Tiles { get; set; }
+        //[XmlIgnore]
+        //public TiledMapTile[] Tiles { get; set; }
 
         public TiledMapTileLayerContent() 
             : base(TiledMapLayerType.TileLayer)

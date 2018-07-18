@@ -16,6 +16,8 @@ namespace Tweening
         private SpriteBatch _spriteBatch;
         private readonly Tweener _tweener = new Tweener();
         private BitmapFont _bitmapFont;
+        private KeyboardService _keyboardService = new KeyboardService();
+        private MouseService _mouseService = new MouseService();
 
         public MainGame()
         {
@@ -78,22 +80,23 @@ namespace Tweening
 
         protected override void Update(GameTime gameTime)
         {
-            var keyboardState = KeyboardExtended.GetState();
-            var mouseState = MouseExtended.GetState();
+            _keyboardService.Update(gameTime);
+            _mouseService.Update(gameTime);
+
             var elapsedSeconds = gameTime.GetElapsedSeconds();
 
-            if (keyboardState.IsKeyDown(Keys.Escape))
+            if (_keyboardService.IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (keyboardState.WasKeyJustDown(Keys.Space))
+            if (_keyboardService.WasKeyJustDown(Keys.Space))
                 _tweener.CancelAll();
 
-            if (keyboardState.WasKeyJustDown(Keys.Tab))
+            if (_keyboardService.WasKeyJustDown(Keys.Tab))
                 _tweener.CancelAndCompleteAll();
 
-            if (mouseState.IsButtonDown(MouseButton.Left))
+            if (_mouseService.IsButtonDown(MouseButton.Left))
             {
-                _tweener.TweenTo(this, a => a.Linear, mouseState.Position.ToVector2(), 1.0f)
+                _tweener.TweenTo(this, a => a.Linear, _mouseService.Position.ToVector2(), 1.0f)
                     .Easing(EasingFunctions.QuadraticOut);
             }
 

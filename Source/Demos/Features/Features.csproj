@@ -44,7 +44,4 @@
     <ProjectReference Include="..\..\MonoGame.Extended.Tweening\MonoGame.Extended.Tweening.csproj" />
     <ProjectReference Include="..\..\MonoGame.Extended\MonoGame.Extended.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Entities;
+using MonoGame.Extended.Input;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
 using Platformer.Systems;
@@ -31,9 +32,11 @@ namespace Platformer
 
         protected override void LoadContent()
         {
+            var keyboadService = new KeyboardService();
+
             _world = new WorldBuilder()
                 .AddSystem(new WorldSystem())
-                .AddSystem(new PlayerSystem())
+                .AddSystem(new PlayerSystem(keyboadService))
                 .AddSystem(new EnemySystem())
                 .AddSystem(new RenderSystem(new SpriteBatch(GraphicsDevice), _camera))
                 .Build();

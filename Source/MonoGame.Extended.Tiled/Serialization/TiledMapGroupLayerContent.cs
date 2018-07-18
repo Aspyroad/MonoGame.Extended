@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using MonoGame.Extended.Tiled;
 
-namespace MonoGame.Extended.Content.Pipeline.Tiled
+namespace MonoGame.Extended.Tiled.Serialization
 {
 	public class TiledMapGroupLayerContent : TiledMapLayerContent
 	{
-		[XmlElement(ElementName = "layer", Type = typeof(TiledMapTileLayerContent))]
+	    public TiledMapGroupLayerContent() 
+	        : base(TiledMapLayerType.GroupLayer)
+	    {
+	    }
+
+        [XmlElement(ElementName = "layer", Type = typeof(TiledMapTileLayerContent))]
 		[XmlElement(ElementName = "imagelayer", Type = typeof(TiledMapImageLayerContent))]
 		[XmlElement(ElementName = "objectgroup", Type = typeof(TiledMapObjectLayerContent))]
 		[XmlElement(ElementName = "group", Type = typeof(TiledMapGroupLayerContent))]
 		public List<TiledMapLayerContent> Layers { get; set; }
-
-		protected TiledMapGroupLayerContent() : base(TiledMapLayerType.GroupLayer)
-		{
-		}
 	}
 }

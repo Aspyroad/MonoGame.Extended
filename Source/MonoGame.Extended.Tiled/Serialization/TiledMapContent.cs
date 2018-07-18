@@ -1,13 +1,20 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace MonoGame.Extended.Content.Pipeline.Tiled
+namespace MonoGame.Extended.Tiled.Serialization
 {
     [XmlRoot(ElementName = "map")]
     public class TiledMapContent
     {
-        [XmlIgnore]
-        public string Name { get; set; }
+        public TiledMapContent()
+        {
+            Properties = new List<TiledMapPropertyContent>();
+            Tilesets = new List<TiledMapTilesetContent>();
+            Layers = new List<TiledMapLayerContent>();
+        }
+
+        //[XmlIgnore]
+        //public string Name { get; set; }
 
         [XmlIgnore]
         public string FilePath { get; set; }
@@ -57,12 +64,5 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
         [XmlArray("properties")]
         [XmlArrayItem("property")]
         public List<TiledMapPropertyContent> Properties { get; set; }
-
-        public TiledMapContent()
-        {
-            Properties = new List<TiledMapPropertyContent>();
-            Tilesets = new List<TiledMapTilesetContent>();
-            Layers = new List<TiledMapLayerContent>();
-        }
     }
 }

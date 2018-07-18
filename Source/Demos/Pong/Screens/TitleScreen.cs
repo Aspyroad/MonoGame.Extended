@@ -9,12 +9,16 @@ namespace Pong.Screens
 {
     public class TitleScreen : GameScreen
     {
+        private readonly KeyboardService _keyboardService;
+        private readonly MouseService _mouseService;
         private SpriteBatch _spriteBatch;
         private Texture2D _background;
 
-        public TitleScreen(Game game)
+        public TitleScreen(Game game, KeyboardService keyboardService, MouseService mouseService)
             : base(game)
         {
+            _keyboardService = keyboardService;
+            _mouseService = mouseService;
             game.IsMouseVisible = true;
         }
 
@@ -27,14 +31,11 @@ namespace Pong.Screens
 
         public override void Update(GameTime gameTime)
         {
-            var mouseState = MouseExtended.GetState();
-            var keyboardState = KeyboardExtended.GetState();
-
-            if (keyboardState.WasKeyJustDown(Keys.Escape))
+            if (_keyboardService.WasKeyJustDown(Keys.Escape))
                 Game.Exit();
 
-            if (mouseState.LeftButton == ButtonState.Pressed || keyboardState.WasAnyKeyJustDown())
-                ScreenManager.LoadScreen(new PongGameScreen(Game), new FadeTransition(GraphicsDevice, Color.Black, 0.5f));
+            if (_mouseService.LeftButton == ButtonState.Pressed || _keyboardService.WasAnyKeyJustDown())
+                ScreenManager.LoadScreen(new PongGameScreen(Game, _keyboardService, _mouseService), new FadeTransition(GraphicsDevice, Color.Black, 0.5f));
         }
 
         public override void Draw(GameTime gameTime)

@@ -19,6 +19,14 @@
     <None Remove="Content\obj\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Content\test-map-1.tmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\test-map-1.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\MonoGame.Extended.Content.Pipeline\MonoGame.Extended.Content.Pipeline.csproj" />
     <ProjectReference Include="..\..\MonoGame.Extended.Entities\MonoGame.Extended.Entities.csproj" />
     <ProjectReference Include="..\..\MonoGame.Extended.Input\MonoGame.Extended.Input.csproj" />

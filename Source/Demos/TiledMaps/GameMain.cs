@@ -1,8 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using System;
+using System.Xml.Serialization;
+using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using MonoGame.Extended.Content;
 using MonoGame.Extended.Entities;
 using MonoGame.Extended.Input;
+using MonoGame.Extended.Tiled.Serialization;
+using Newtonsoft.Json;
 using TiledMaps.Systems;
 
 namespace TiledMaps
@@ -23,13 +27,20 @@ namespace TiledMaps
 
         protected override void LoadContent()
         {
+            using (var reader = Content.OpenStream("test-map-1.tmx"))
+            {
+                var mapSerializer = new XmlSerializer(typeof(TiledMapContent));
+                var map = (TiledMapContent) mapSerializer.Deserialize(reader);
+                Console.WriteLine(JsonConvert.SerializeObject(map));
+            }
+
             //var font = Content.Load<BitmapFont>("Sensation");
-            var camera = new OrthographicCamera(GraphicsDevice);
+            var camera = new OrthographicCamera(GraphicsDevice) { Position = new Vector2(-400, 0) };
             var keyboardService = new KeyboardService();
             var mouseService = new MouseService();
 
             _world = new WorldBuilder()
-                .AddSystem(new InputSystem(mouseService, keyboardService))
+                .AddSystem(new InputSystem(this, mouseService, keyboardService))
                 .AddSystem(new MapRenderingSystem(Content, GraphicsDevice, camera))
                 .AddSystem(new CameraSystem(camera, keyboardService, mouseService))
                 .Build();
@@ -42,11 +53,6 @@ namespace TiledMaps
 
         protected override void Update(GameTime gameTime)
         {
-            var keyboardState = Keyboard.GetState();
-
-            if (keyboardState.IsKeyDown(Keys.Escape))
-                Exit();
-
             _world.Update(gameTime);
             base.Update(gameTime);
         }

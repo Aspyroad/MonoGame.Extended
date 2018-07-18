@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tiled.Serialization;
 
 namespace MonoGame.Extended.Content.Pipeline.Tiled
 {
@@ -51,12 +50,13 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
         private static void WriteTileset(ContentWriter writer, TiledMapTilesetContent tileset)
         {
             writer.Write(tileset.FirstGlobalIdentifier);
-			if (tileset.Content != null)
-			{
-				writer.Write(true);
-				writer.WriteExternalReference(tileset.Content);
-			}
-			else
+            // TODO: What the heck to do here?
+			//if (tileset.Content != null)
+			//{
+			//	writer.Write(true);
+			//	writer.WriteExternalReference(tileset.Content);
+			//}
+			//else
 			{
 				writer.Write(false);
 				TiledMapTilesetWriter.WriteTileset(writer, tileset);
@@ -104,7 +104,8 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
         private static void WriteImageLayer(ContentWriter writer, TiledMapImageLayerContent imageLayer)
         {
-            writer.WriteExternalReference(imageLayer.Image.ContentRef);
+            // TODO: What the heck to do here?
+            //writer.WriteExternalReference(imageLayer.Image.ContentRef);
             writer.Write(new Vector2(imageLayer.X, imageLayer.Y));
         }
 
@@ -114,14 +115,15 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             writer.Write(tileLayer.Width);
             writer.Write(tileLayer.Height);
 
-            writer.Write(tileLayer.Tiles.Length);
+            // TODO: What the heck to do here?
+            //writer.Write(tileLayer.Tiles.Length);
 
-            foreach (var tile in tileLayer.Tiles)
-            {
-                writer.Write(tile.GlobalTileIdentifierWithFlags);
-                writer.Write(tile.X);
-                writer.Write(tile.Y);
-            }
+            //foreach (var tile in tileLayer.Tiles)
+            //{
+            //    writer.Write(tile.GlobalTileIdentifierWithFlags);
+            //    writer.Write(tile.X);
+            //    writer.Write(tile.Y);
+            //}
         }
 
         private static void WriteObjectLayer(ContentWriter writer, TiledMapObjectLayerContent layer)
@@ -142,15 +144,15 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
             writer.Write((byte)type);
 
-            writer.Write(@object.Identifier);
+            writer.Write(@object.Identifier ?? 0);
             writer.Write(@object.Name ?? string.Empty);
             writer.Write(@object.Type ?? string.Empty);
-            writer.Write(@object.X);
-            writer.Write(@object.Y);
-            writer.Write(@object.Width);
-            writer.Write(@object.Height);
-            writer.Write(@object.Rotation);
-            writer.Write(@object.Visible);
+            writer.Write(@object.X ?? 0f);
+            writer.Write(@object.Y ?? 0f);
+            writer.Write(@object.Width ?? 0f);
+            writer.Write(@object.Height ?? 0f);
+            writer.Write(@object.Rotation ?? 0f);
+            writer.Write(@object.Visible ?? true);
 
             writer.WriteTiledMapProperties(@object.Properties);
 
@@ -160,7 +162,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
                 case TiledMapObjectType.Ellipse:
                     break;
                 case TiledMapObjectType.Tile:
-                    writer.Write(@object.GlobalIdentifier);
+                    writer.Write(@object.GlobalIdentifier ?? 0);
                     break;
                 case TiledMapObjectType.Polygon:
                     WritePolyPoints(writer, @object.Polygon.Points);

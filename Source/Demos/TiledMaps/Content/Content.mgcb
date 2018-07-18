@@ -26,11 +26,6 @@
 /processorParam:TextureFormat=Color
 /build:buildings-tileset.png
 
-#begin buildings-tileset.tsx
-/importer:TiledMapTilesetImporter
-/processor:TiledMapTilesetProcessor
-/build:buildings-tileset.tsx
-
 #begin city-tileset.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -42,11 +37,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:city-tileset.png
-
-#begin city-tileset.tsx
-/importer:TiledMapTilesetImporter
-/processor:TiledMapTilesetProcessor
-/build:city-tileset.tsx
 
 #begin Sensation.fnt
 /importer:BitmapFontImporter
@@ -64,9 +54,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sensation_0.png
-
-#begin test-map-1.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:test-map-1.tmx
 

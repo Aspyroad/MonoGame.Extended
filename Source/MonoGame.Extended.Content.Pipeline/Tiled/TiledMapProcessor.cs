@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Tiled.Serialization;
 using MonoGame.Utilities;
 using CompressionMode = System.IO.Compression.CompressionMode;
 
@@ -26,13 +25,18 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
 				foreach (var tileset in map.Tilesets)
 				{
-					if (String.IsNullOrWhiteSpace(tileset.Source))
-						// Load the Texture2DContent for the tileset as it will be saved into the map content file.
-						tileset.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(tileset.Image.Source), "", new OpaqueDataDictionary() { { "ColorKeyColor", tileset.Image.TransparentColor }, { "ColorKeyEnabled", true } }, "", "");
+					if (string.IsNullOrWhiteSpace(tileset.Source))
+					{
+					    // TODO: What the heck to do here?
+                        // Load the Texture2DContent for the tileset as it will be saved into the map content file.
+                        //tileset.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(tileset.Image.Source), "", new OpaqueDataDictionary() { { "ColorKeyColor", tileset.Image.TransparentColor }, { "ColorKeyEnabled", true } }, "", "");
+					}
 					else
-						// Link to the tileset for the content loader to load at runtime.
-						tileset.Content = context.BuildAsset<TiledMapTilesetContent, TiledMapTilesetContent>(new ExternalReference<TiledMapTilesetContent>(tileset.Source), "");
-					
+					{
+                        // TODO: What the heck to do here?
+					    // Link to the tileset for the content loader to load at runtime.
+					    //tileset.Content = context.BuildAsset<TiledMapTilesetContent, TiledMapTilesetContent>(new ExternalReference<TiledMapTilesetContent>(tileset.Source), "");
+					}
 				}
 
 				ProcessLayers(map, context, map.Layers);
@@ -53,9 +57,10 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 			{
 				if (layer is TiledMapImageLayerContent imageLayer)
 				{
-					ContentLogger.Log($"Processing image layer '{imageLayer.Name}'");
-					imageLayer.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(imageLayer.Image.Source), "", new OpaqueDataDictionary() { { "ColorKeyColor", imageLayer.Image.TransparentColor }, { "ColorKeyEnabled", true } }, "", "");
-					ContentLogger.Log($"Processed image layer '{imageLayer.Name}'");
+                    // TODO: What the heck to do here?
+					//ContentLogger.Log($"Processing image layer '{imageLayer.Name}'");
+					//imageLayer.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(imageLayer.Image.Source), "", new OpaqueDataDictionary() { { "ColorKeyColor", imageLayer.Image.TransparentColor }, { "ColorKeyEnabled", true } }, "", "");
+					//ContentLogger.Log($"Processed image layer '{imageLayer.Name}'");
 				}
 
 				if (layer is TiledMapTileLayerContent tileLayer)
@@ -72,7 +77,9 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
 					var tileData = DecodeTileLayerData(encodingType, tileLayer);
 					var tiles = CreateTiles(map.RenderOrder, map.Width, map.Height, tileData);
-					tileLayer.Tiles = tiles;
+
+                    // TODO: What the heck to do here?
+					//tileLayer.Tiles = tiles;
 
 					ContentLogger.Log($"Processed tile layer '{tileLayer}': {tiles.Length} tiles");
 				}
@@ -80,8 +87,10 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 				if (layer is TiledMapObjectLayerContent objectLayer)
 				{
 					ContentLogger.Log($"Processing object layer '{objectLayer.Name}'");
-					foreach (var obj in objectLayer.Objects)
-						TiledMapObjectContent.Process(obj, context);
+
+				    foreach (var obj in objectLayer.Objects)
+						ProcessObject(obj, context);
+
 					ContentLogger.Log($"Processed object layer '{objectLayer.Name}'");
 				}
 
@@ -89,8 +98,65 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 					ProcessLayers(map, context, groupLayer.Layers);
 			}
 		}
+        
+        private static void ProcessObject(TiledMapObjectContent obj, ContentProcessorContext context)
+        {
+            if (!string.IsNullOrWhiteSpace(obj.TemplateSource))
+            {
+                var template = context.BuildAndLoadAsset<TiledMapObjectLayerContent, TiledMapObjectTemplateContent>(new ExternalReference<TiledMapObjectLayerContent>(obj.TemplateSource), "");
 
-		private static List<TiledMapTileContent> DecodeTileLayerData(string encodingType, TiledMapTileLayerContent tileLayer)
+                // Nothing says a template can't reference another template.
+                // Yay recusion!
+                ProcessObject(template.Object, context);
+
+                if (!obj.GlobalIdentifier.HasValue && template.Object.GlobalIdentifier.HasValue)
+                    obj.GlobalIdentifier = template.Object.GlobalIdentifier;
+
+                if (!obj.Height.HasValue && template.Object.Height.HasValue)
+                    obj.Height = template.Object.Height;
+
+                if (!obj.Identifier.HasValue && template.Object.Identifier.HasValue)
+                    obj.Identifier = template.Object.Identifier;
+
+                if (!obj.Rotation.HasValue && template.Object.Rotation.HasValue)
+                    obj.Rotation = template.Object.Rotation;
+
+                if (!obj.Visible.HasValue && template.Object.Visible.HasValue)
+                    obj.Visible = template.Object.Visible;
+
+                if (!obj.Width.HasValue && template.Object.Width.HasValue)
+                    obj.Width = template.Object.Width;
+
+                if (!obj.X.HasValue && template.Object.X.HasValue)
+                    obj.X = template.Object.X;
+
+                if (!obj.X.HasValue && template.Object.X.HasValue)
+                    obj.Y = template.Object.Y;
+
+                if (obj.Ellipse == null && template.Object.Ellipse != null)
+                    obj.Ellipse = template.Object.Ellipse;
+
+                if (string.IsNullOrWhiteSpace(obj.Name) && !string.IsNullOrWhiteSpace(template.Object.Name))
+                    obj.Name = template.Object.Name;
+
+                if (obj.Polygon == null && template.Object.Polygon != null)
+                    obj.Polygon = template.Object.Polygon;
+
+                if (obj.Polyline == null && template.Object.Polyline != null)
+                    obj.Polyline = template.Object.Polyline;
+
+                foreach (var tProperty in template.Object.Properties)
+                {
+                    if (!obj.Properties.Exists(p => p.Name == tProperty.Name))
+                        obj.Properties.Add(tProperty);
+                }
+
+                if (string.IsNullOrWhiteSpace(obj.Type) && !string.IsNullOrWhiteSpace(template.Object.Type))
+                    obj.Type = template.Object.Type;
+            }
+        }
+
+        private static List<TiledMapTileContent> DecodeTileLayerData(string encodingType, TiledMapTileLayerContent tileLayer)
         {
             List<TiledMapTileContent> tiles;
 

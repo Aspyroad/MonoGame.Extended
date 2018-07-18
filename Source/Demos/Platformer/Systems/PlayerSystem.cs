@@ -14,21 +14,21 @@ namespace Platformer.Systems
 {
     public class PlayerSystem : EntityProcessingSystem
     {
+        private readonly KeyboardService _keyboardService;
         private ComponentMapper<Player> _playerMapper;
         private ComponentMapper<AnimatedSprite> _spriteMapper;
-        private ComponentMapper<Transform2> _transformMapper;
         private ComponentMapper<Body> _bodyMapper;
 
-        public PlayerSystem() 
-            : base(Aspect.All(typeof(Body), typeof(Player), typeof(Transform2), typeof(AnimatedSprite)))
+        public PlayerSystem(KeyboardService keyboardService) 
+            : base(Aspect.All(typeof(Body), typeof(Player), typeof(AnimatedSprite)))
         {
+            _keyboardService = keyboardService;
         }
 
         public override void Initialize(IComponentMapperService mapperService)
         {
             _playerMapper = mapperService.GetMapper<Player>();
             _spriteMapper = mapperService.GetMapper<AnimatedSprite>();
-            _transformMapper = mapperService.GetMapper<Transform2>();
             _bodyMapper = mapperService.GetMapper<Body>();
         }
 
@@ -36,29 +36,29 @@ namespace Platformer.Systems
         {
             var player = _playerMapper.Get(entityId);
             var sprite = _spriteMapper.Get(entityId);
-            var transform = _transformMapper.Get(entityId);
             var body = _bodyMapper.Get(entityId);
-            var keyboardState = KeyboardExtended.GetState();
+
+            _keyboardService.Update(gameTime);
 
             if (player.CanJump)
             {
-                if (keyboardState.WasKeyJustUp(Keys.Up))
+                if (_keyboardService.WasKeyJustUp(Keys.Up))
                     body.Velocity.Y -= 550 + Math.Abs(body.Velocity.X) * 0.4f;
 
-                if (keyboardState.WasKeyJustUp(Keys.Z))
+                if (_keyboardService.WasKeyJustUp(Keys.Z))
                 {
                     body.Velocity.Y -= 550 + Math.Abs(body.Velocity.X) * 0.4f;
                     player.State = player.State == State.Idle ? State.Punching : State.Kicking;
                 }
             }
 
-            if (keyboardState.IsKeyDown(Keys.Right))
+            if (_keyboardService.IsKeyDown(Keys.Right))
             {
                 body.Velocity.X += 150;
                 player.Facing = Facing.Right;
             }
 
-            if (keyboardState.IsKeyDown(Keys.Left))
+            if (_keyboardService.IsKeyDown(Keys.Left))
             {
                 body.Velocity.X -= 150;
                 player.Facing = Facing.Left;
@@ -79,7 +79,7 @@ namespace Platformer.Systems
                     player.State = State.Idle;
             }
 
-            if (keyboardState.IsKeyDown(Keys.Down))
+            if (_keyboardService.IsKeyDown(Keys.Down))
                 player.State = State.Cool;
 
             switch (player.State)
