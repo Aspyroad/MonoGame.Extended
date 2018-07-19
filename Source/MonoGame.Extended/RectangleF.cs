@@ -179,8 +179,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="RectangleF" />.</returns>
         public static RectangleF CreateFrom(Point2 minimum, Point2 maximum)
         {
-            RectangleF result;
-            CreateFrom(minimum, maximum, out result);
+            CreateFrom(minimum, maximum, out var result);
             return result;
         }
 
@@ -191,9 +190,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting rectangle.</param>
         public static void CreateFrom(IReadOnlyList<Point2> points, out RectangleF result)
         {
-            Point2 minimum;
-            Point2 maximum;
-            PrimitivesHelper.CreateRectangleFromPoints(points, out minimum, out maximum);
+            PrimitivesHelper.CreateRectangleFromPoints(points, out var minimum, out var maximum);
             CreateFrom(minimum, maximum, out result);
         }
 
@@ -204,8 +201,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="RectangleF" />.</returns>
         public static RectangleF CreateFrom(IReadOnlyList<Point2> points)
         {
-            RectangleF result;
-            CreateFrom(points, out result);
+            CreateFrom(points, out var result);
             return result;
         }
 
@@ -261,8 +257,7 @@ namespace MonoGame.Extended
         /// </remarks>
         public static RectangleF Transform(RectangleF rectangle, ref Matrix2 transformMatrix)
         {
-            RectangleF result;
-            Transform(ref rectangle, ref transformMatrix, out result);
+            Transform(ref rectangle, ref transformMatrix, out var result);
             return result;
         }
 
@@ -294,8 +289,7 @@ namespace MonoGame.Extended
         /// </returns>
         public static RectangleF Union(RectangleF first, RectangleF second)
         {
-            RectangleF result;
-            Union(ref first, ref second, out result);
+            Union(ref first, ref second, out var result);
             return result;
         }
 
@@ -309,8 +303,7 @@ namespace MonoGame.Extended
         /// </returns>
         public RectangleF Union(RectangleF rectangle)
         {
-            RectangleF result;
-            Union(ref this, ref rectangle, out result);
+            Union(ref this, ref rectangle, out var result);
             return result;
         }
 
@@ -352,8 +345,7 @@ namespace MonoGame.Extended
         public static RectangleF Intersection(RectangleF first,
             RectangleF second)
         {
-            RectangleF result;
-            Intersection(ref first, ref second, out result);
+            Intersection(ref first, ref second, out var result);
             return result;
         }
 
@@ -368,16 +360,14 @@ namespace MonoGame.Extended
         /// </returns>
         public RectangleF Intersection(RectangleF rectangle)
         {
-            RectangleF result;
-            Intersection(ref this, ref rectangle, out result);
+            Intersection(ref this, ref rectangle, out var result);
             return result;
         }
 
         [Obsolete("RectangleF.Intersect() may be removed in the future. Use Intersection() instead.")]
         public static RectangleF Intersect(RectangleF value1, RectangleF value2)
         {
-            RectangleF rectangle;
-            Intersection(ref value1, ref value2, out rectangle);
+            Intersection(ref value1, ref value2, out var rectangle);
             return rectangle;
         }
 
@@ -514,12 +504,13 @@ namespace MonoGame.Extended
         /// <returns>The closest <see cref="Point2" /> on this <see cref="RectangleF" /> to the <paramref name="point" />.</returns>
         public Point2 ClosestPointTo(Point2 point)
         {
-            Point2 result;
-            PrimitivesHelper.ClosestPointToPointFromRectangle(TopLeft, BottomRight, point, out result);
+            PrimitivesHelper.ClosestPointToPointFromRectangle(TopLeft, BottomRight, point, out var result);
             return result;
         }
 
-        //TODO: Document this.
+        /// <summary>
+        /// Grows this rectangle in both directions by the specified amount.
+        /// </summary>
         public void Inflate(float horizontalAmount, float verticalAmount)
         {
             X -= horizontalAmount;
@@ -528,14 +519,21 @@ namespace MonoGame.Extended
             Height += verticalAmount * 2;
         }
 
-        //TODO: Document this.
+        /// <summary>
+        /// Moves this rectangle by the specified offset.
+        /// </summary>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
         public void Offset(float offsetX, float offsetY)
         {
             X += offsetX;
             Y += offsetY;
         }
 
-        //TODO: Document this.
+        /// <summary>
+        /// Moves this rectangle by the specified offset.
+        /// </summary>
+        /// <param name="amount"></param>
         public void Offset(Vector2 amount)
         {
             X += amount.X;
@@ -611,7 +609,7 @@ namespace MonoGame.Extended
         /// </returns>
         public override bool Equals(object obj)
         {
-            return obj is RectangleF && Equals((RectangleF)obj);
+            return obj is RectangleF f && Equals(f);
         }
 
         /// <summary>
@@ -625,11 +623,13 @@ namespace MonoGame.Extended
         {
             unchecked
             {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
                 var hashCode = X.GetHashCode();
                 hashCode = (hashCode * 397) ^ Y.GetHashCode();
                 hashCode = (hashCode * 397) ^ Width.GetHashCode();
                 hashCode = (hashCode * 397) ^ Height.GetHashCode();
                 return hashCode;
+                // ReSharper restore NonReadonlyMemberInGetHashCode
             }
         }
 

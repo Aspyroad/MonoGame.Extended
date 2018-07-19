@@ -67,23 +67,23 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             writer.WriteTiledMapProperties(tilesetTile.Properties);
         }
 
-        private static void WriteObject(ContentWriter writer, TiledMapObjectContent @object)
+        private static void WriteObject(ContentWriter writer, TiledMapObjectContent ob)
         {
-            var type = GetObjectType(@object);
+            var type = GetObjectType(ob);
 
             writer.Write((byte)type);
+            
+            writer.Write(ob.Identifier);
+            writer.Write(ob.Name ?? string.Empty);
+            writer.Write(ob.Type ?? string.Empty);
+            writer.Write(ob.X);
+            writer.Write(ob.Y);
+            writer.Write(ob.Width);
+            writer.Write(ob.Height);
+            writer.Write(ob.Rotation);
+            writer.Write(ob.Visible);
 
-            writer.Write(@object.Identifier ?? 0);
-            writer.Write(@object.Name ?? string.Empty);
-            writer.Write(@object.Type ?? string.Empty);
-            writer.Write(@object.X ?? 0f);
-            writer.Write(@object.Y ?? 0f);
-            writer.Write(@object.Width ?? 0f);
-            writer.Write(@object.Height ?? 0f);
-            writer.Write(@object.Rotation ?? 0f);
-            writer.Write(@object.Visible ?? true);
-
-            writer.WriteTiledMapProperties(@object.Properties);
+            writer.WriteTiledMapProperties(ob.Properties);
 
             switch (type)
             {
@@ -91,13 +91,13 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
                 case TiledMapObjectType.Ellipse:
                     break;
                 case TiledMapObjectType.Tile:
-                    writer.Write(@object.GlobalIdentifier ?? 0); // TODO: Zero default value, really?
+                    writer.Write(ob.GlobalIdentifier);
                     break;
                 case TiledMapObjectType.Polygon:
-                    WritePolyPoints(writer, @object.Polygon.Points);
+                    WritePolyPoints(writer, ob.Polygon.Points);
                     break;
                 case TiledMapObjectType.Polyline:
-                    WritePolyPoints(writer, @object.Polyline.Points);
+                    WritePolyPoints(writer, ob.Polyline.Points);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

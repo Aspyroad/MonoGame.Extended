@@ -1,40 +1,27 @@
-using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace MonoGame.Extended.Tiled.Serialization
 {
-    // This content class is going to be a lot more complex than the others we use.
     // Objects can reference a template file which has starting values for the
     // object. The value in the object file overrides any value specified in the
-    // template. All values have to be able to store a null value so we know if the
-    // XML parser actually found a value for the property and not just a default
-    // value. Default values are used when the object and any templates don't 
-    // specify a value.
-    public class TiledMapObjectContent : IXmlSerializable
+    // template.
+    //
+    // To handle this we're using an annoying quirk of the XmlSerializer known as
+    // the specified pattern to determin if the attribute actually exists in the XML.
+    //
+    // Unfortunately, there's no great way to do this unless we change to a different
+    // XML serializer.
+    public class TiledMapObjectContent
     {
         public TiledMapObjectContent()
         {
-
         }
 
-        //private uint? _globalIdentifier;
-        //private int? _identifier;
-        //private float? _height;
-        //private float? _rotation;
-        //private bool? _visible;
-        //private float? _width;
-        //private float? _x;
-        //private float? _y;
-
         [XmlAttribute(DataType = "int", AttributeName = "id")]
-        public int? Identifier { get; set; }
-        //{
-        //    get => _identifier ?? 0;
-        //    set => _identifier = value;
-        //}
+        public int Identifier { get; set; }
+        [XmlIgnore]
+        public bool IdentifierSpecified { get; set; }
 
         [XmlAttribute(DataType = "string", AttributeName = "name")]
         public string Name { get; set; }
@@ -43,57 +30,43 @@ namespace MonoGame.Extended.Tiled.Serialization
         public string Type { get; set; }
 
         [XmlAttribute(DataType = "float", AttributeName = "x")]
-        public float? X { get; set; }
-        //{
-        //    get => _x ?? 0;
-        //    set => _x = value;
-        //}
+        public float X { get; set; }
+        [XmlIgnore]
+        public bool XSpecified { get; set; }
 
         [XmlAttribute(DataType = "float", AttributeName = "y")]
-        public float? Y { get; set; }
-        //{
-        //    get => _y ?? 0;
-        //    set => _y = value;
-        //}
-
+        public float Y { get; set; }
+        [XmlIgnore]
+        public bool YSpecified { get; set; }
+        
         [XmlAttribute(DataType = "float", AttributeName = "width")]
-        public float? Width { get; set; }
-        //{
-        //    get => _width ?? 0;
-        //    set => _width = value;
-        //}
+        public float Width { get; set; }
+        [XmlIgnore]
+        public bool WidthSpecified { get; set; }
 
         [XmlAttribute(DataType = "float", AttributeName = "height")]
-        public float? Height { get; set; }
-        //{
-        //    get => _height ?? 0;
-        //    set => _height = value;
-        //}
+        public float Height { get; set; }
+        [XmlIgnore]
+        public bool HeightSpecified { get; set; }
 
         [XmlAttribute(DataType = "float", AttributeName = "rotation")]
-        public float? Rotation { get; set; }
-        //{
-        //    get => _rotation ?? 0;
-        //    set => _rotation = value;
-        //}
+        public float Rotation { get; set; }
+        [XmlIgnore]
+        public bool RotationSpecified { get; set; }
 
         [XmlAttribute(DataType = "boolean", AttributeName = "visible")]
-        public bool? Visible { get; set; }
-        //{
-        //    get => _visible ?? true;
-        //    set => _visible = value;
-        //}
+        public bool Visible { get; set; }
+        [XmlIgnore]
+        public bool VisibleSpecified { get; set; }
+
+        [XmlAttribute(DataType = "unsignedInt", AttributeName = "gid")]
+        public uint GlobalIdentifier { get; set; }
+        [XmlIgnore]
+        public bool GlobalIdentifierSpecified { get; set; }
 
         [XmlArray("properties")]
         [XmlArrayItem("property")]
         public List<TiledMapPropertyContent> Properties { get; set; }
-
-        [XmlAttribute(DataType = "unsignedInt", AttributeName = "gid")]
-        public uint? GlobalIdentifier { get; set; }
-        //{
-        //    get => _globalIdentifier ?? 0;
-        //    set => _globalIdentifier = value;
-        //}
 
         [XmlElement(ElementName = "ellipse")]
         public TiledMapEllipseContent Ellipse { get; set; }
@@ -106,20 +79,5 @@ namespace MonoGame.Extended.Tiled.Serialization
 
         [XmlAttribute(DataType = "string", AttributeName = "template")]
         public string TemplateSource { get; set; }
-
-        public XmlSchema GetSchema()
-        {
-            return null;
-        }
-
-        public void ReadXml(XmlReader reader)
-        {
-            // TODO: Finish this
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-            // TODO: Finish this
-        }
     }
 }

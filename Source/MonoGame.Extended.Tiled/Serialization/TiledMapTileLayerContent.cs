@@ -19,8 +19,8 @@ namespace MonoGame.Extended.Tiled.Serialization
         [XmlElement(ElementName = "data")]
         public TiledMapTileLayerDataContent Data { get; set; }
 
-        //[XmlIgnore]
-        //public TiledMapTile[] Tiles { get; set; }
+        [XmlIgnore]
+        public TiledMapTile[] OrderedTiles { get; set; }
 
         public TiledMapTileLayerContent() 
             : base(TiledMapLayerType.TileLayer)

@@ -3,6 +3,22 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="TestData\astrid-animator-atlas.json" />
+    <None Remove="TestData\astrid-animator.aa" />
+    <None Remove="TestData\test-tileset.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestData\astrid-animator-atlas.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\astrid-animator.aa">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\test-tileset.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.7.0.7" />
@@ -15,17 +31,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\MonoGame.Extended.Content.Pipeline\MonoGame.Extended.Content.Pipeline.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="TestData\astrid-animator-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\astrid-animator.aa">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\test-tileset.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

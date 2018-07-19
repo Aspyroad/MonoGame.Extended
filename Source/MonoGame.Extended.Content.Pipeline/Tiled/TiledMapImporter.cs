@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework.Content.Pipeline;
@@ -43,23 +44,25 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             {
                 var mapSerializer = new XmlSerializer(typeof(TiledMapContent));
                 var map = (TiledMapContent)mapSerializer.Deserialize(reader);
+                var mapDirectory = Path.GetDirectoryName(mapFilePath);
+                Debug.Assert(mapDirectory != null);
 
                 map.FilePath = mapFilePath;
 
                 for (var i = 0; i < map.Tilesets.Count; i++)
                 {
                     var tileset = map.Tilesets[i];
-
+                    
                     if (!string.IsNullOrWhiteSpace(tileset.Source))
                     {
-                        tileset.Source = $"{Path.GetDirectoryName(mapFilePath)}/{tileset.Source}";
+                        tileset.Source = Path.Combine(mapDirectory, tileset.Source);
                         ContentLogger.Log($"Adding dependency for {tileset.Source}");
                         // We depend on the tileset. If the tileset changes, the map also needs to rebuild.
                         context.AddDependency(tileset.Source);
                     }
                     else
                     {
-                        tileset.Image.Source = $"{Path.GetDirectoryName(mapFilePath)}/{tileset.Image.Source}";
+                        tileset.Image.Source = Path.Combine(mapDirectory, tileset.Image.Source);
                         ContentLogger.Log($"Adding dependency for {tileset.Image.Source}");
                         context.AddDependency(tileset.Image.Source);
                     }

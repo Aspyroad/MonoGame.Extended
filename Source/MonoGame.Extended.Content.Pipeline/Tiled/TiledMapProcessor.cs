@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using Microsoft.Xna.Framework.Content.Pipeline;
-using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Serialization;
 using MonoGame.Utilities;
 using CompressionMode = System.IO.Compression.CompressionMode;
@@ -72,14 +72,12 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 					var encodingType = data.Encoding ?? "xml";
 					var compressionType = data.Compression ?? "xml";
 
-					ContentLogger.Log(
-						$"Processing tile layer '{tileLayer.Name}': Encoding: '{encodingType}', Compression: '{compressionType}'");
+					ContentLogger.Log($"Processing tile layer '{tileLayer.Name}': Encoding: '{encodingType}', Compression: '{compressionType}'");
 
 					var tileData = DecodeTileLayerData(encodingType, tileLayer);
-					var tiles = CreateTiles(map.RenderOrder, map.Width, map.Height, tileData);
+					var tiles = CreateOrderedTiles(map.RenderOrder, map.Width, map.Height, tileData);
 
-                    // TODO: What the heck to do here?
-					//tileLayer.Tiles = tiles;
+					tileLayer.OrderedTiles = tiles;
 
 					ContentLogger.Log($"Processed tile layer '{tileLayer}': {tiles.Length} tiles");
 				}
@@ -103,34 +101,35 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
         {
             if (!string.IsNullOrWhiteSpace(obj.TemplateSource))
             {
-                var template = context.BuildAndLoadAsset<TiledMapObjectLayerContent, TiledMapObjectTemplateContent>(new ExternalReference<TiledMapObjectLayerContent>(obj.TemplateSource), "");
+                var externalReference = new ExternalReference<TiledMapObjectLayerContent>(obj.TemplateSource);
+                var template = context.BuildAndLoadAsset<TiledMapObjectLayerContent, TiledMapObjectTemplateContent>(externalReference, "");
 
                 // Nothing says a template can't reference another template.
                 // Yay recusion!
                 ProcessObject(template.Object, context);
 
-                if (!obj.GlobalIdentifier.HasValue && template.Object.GlobalIdentifier.HasValue)
+                if (!obj.GlobalIdentifierSpecified && template.Object.GlobalIdentifierSpecified)
                     obj.GlobalIdentifier = template.Object.GlobalIdentifier;
 
-                if (!obj.Height.HasValue && template.Object.Height.HasValue)
+                if (!obj.HeightSpecified && template.Object.HeightSpecified)
                     obj.Height = template.Object.Height;
 
-                if (!obj.Identifier.HasValue && template.Object.Identifier.HasValue)
+                if (!obj.IdentifierSpecified && template.Object.IdentifierSpecified)
                     obj.Identifier = template.Object.Identifier;
 
-                if (!obj.Rotation.HasValue && template.Object.Rotation.HasValue)
+                if (!obj.RotationSpecified && template.Object.RotationSpecified)
                     obj.Rotation = template.Object.Rotation;
 
-                if (!obj.Visible.HasValue && template.Object.Visible.HasValue)
+                if (!obj.VisibleSpecified && template.Object.VisibleSpecified)
                     obj.Visible = template.Object.Visible;
 
-                if (!obj.Width.HasValue && template.Object.Width.HasValue)
+                if (!obj.WidthSpecified && template.Object.WidthSpecified)
                     obj.Width = template.Object.Width;
 
-                if (!obj.X.HasValue && template.Object.X.HasValue)
+                if (!obj.XSpecified && template.Object.XSpecified)
                     obj.X = template.Object.X;
 
-                if (!obj.X.HasValue && template.Object.X.HasValue)
+                if (!obj.XSpecified && template.Object.XSpecified)
                     obj.Y = template.Object.Y;
 
                 if (obj.Ellipse == null && template.Object.Ellipse != null)
@@ -178,7 +177,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             return tiles;
         }
 
-        private static TiledMapTile[] CreateTiles(TiledMapTileDrawOrderContent renderOrder, int mapWidth, int mapHeight, List<TiledMapTileContent> tileData)
+        private static TiledMapTile[] CreateOrderedTiles(TiledMapTileDrawOrderContent renderOrder, int mapWidth, int mapHeight, List<TiledMapTileContent> tileData)
         {
             TiledMapTile[] tiles;
 

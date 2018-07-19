@@ -144,15 +144,15 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
             writer.Write((byte)type);
 
-            writer.Write(@object.Identifier ?? 0);
+            writer.Write(@object.Identifier);
             writer.Write(@object.Name ?? string.Empty);
             writer.Write(@object.Type ?? string.Empty);
-            writer.Write(@object.X ?? 0f);
-            writer.Write(@object.Y ?? 0f);
-            writer.Write(@object.Width ?? 0f);
-            writer.Write(@object.Height ?? 0f);
-            writer.Write(@object.Rotation ?? 0f);
-            writer.Write(@object.Visible ?? true);
+            writer.Write(@object.X);
+            writer.Write(@object.Y);
+            writer.Write(@object.Width);
+            writer.Write(@object.Height);
+            writer.Write(@object.Rotation);
+            writer.Write(@object.Visible);
 
             writer.WriteTiledMapProperties(@object.Properties);
 
@@ -162,7 +162,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
                 case TiledMapObjectType.Ellipse:
                     break;
                 case TiledMapObjectType.Tile:
-                    writer.Write(@object.GlobalIdentifier ?? 0);
+                    writer.Write(@object.GlobalIdentifier);
                     break;
                 case TiledMapObjectType.Polygon:
                     WritePolyPoints(writer, @object.Polygon.Points);

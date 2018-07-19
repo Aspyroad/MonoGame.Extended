@@ -96,24 +96,12 @@ namespace Pong.Screens
             MoveBall(elapsedSeconds);
 
             if (BallHitPaddle(_ball, _bluePaddle))
-            {
-                // TODO: Change the angle of the bounce
-                //_tweener.TweenTo(_bluePaddle, p => p.Rotation, MathHelper.Pi / 16f, 0.2f)
-                //    //.OnSet(v => new Vector2(v.X, _bluePaddle.Position.Y))
-                //    .RepeatReverse()
-                //    .Easing(EasingFunctions.ExponentialIn);
-                    
+            {      
                 _plopSoundEffect.Play(1.0f, _random.NextSingle(0.5f, 1.0f), -1f);
             }
 
             if (BallHitPaddle(_ball, _redPaddle))
             {
-                // TODO: Change the angle of the bounce
-
-                //_tweener.TweenTo(_redPaddle, p => p.Position, _redPaddle.Position + new Vector2(15, 0), 0.2f)
-                //    .RepeatReverse()
-                //    .Easing(EasingFunctions.ExponentialIn);
-
                 _plopSoundEffect.Play(1f, _random.NextSingle(-1f, 1f), 1f);
             }
 
