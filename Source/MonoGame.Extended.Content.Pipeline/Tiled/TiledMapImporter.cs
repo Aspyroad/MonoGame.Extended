@@ -85,19 +85,26 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 					context.AddDependency(imageLayer.Image.Source);
 				}
 				if (layers[i] is TiledMapObjectLayerContent objectLayer)
-					foreach (var obj in objectLayer.Objects)
-						if (!String.IsNullOrWhiteSpace(obj.TemplateSource))
-						{
-							obj.TemplateSource = $"{path}/{obj.TemplateSource}";
-							ContentLogger.Log($"Adding dependency for '{obj.TemplateSource}'");
-							// Tell the pipeline that we depend on this template and need to rebuild the map if the template changes.
-							// (Templates are loaded into objects on process, so all objects which depend on the template file
-							//  need the change to the template)
-							context.AddDependency(obj.TemplateSource);
-						}
-				if (layers[i] is TiledMapGroupLayerContent groupLayer)
-					// Yay recursion!
-					ImportLayers(context, groupLayer.Layers, path);
+				{
+				    foreach (var obj in objectLayer.Objects)
+				    {
+				        if (!string.IsNullOrWhiteSpace(obj.TemplateSource))
+				        {
+				            obj.TemplateSource = $"{path}/{obj.TemplateSource}";
+				            ContentLogger.Log($"Adding dependency for '{obj.TemplateSource}'");
+				            // Tell the pipeline that we depend on this template and need to rebuild the map if the template changes.
+				            // (Templates are loaded into objects on process, so all objects which depend on the template file
+				            //  need the change to the template)
+				            context.AddDependency(obj.TemplateSource);
+				        }
+				    }
+				}
+
+			    if (layers[i] is TiledMapGroupLayerContent groupLayer)
+			    {
+			        // Yay recursion!
+			        ImportLayers(context, groupLayer.Layers, path);
+			    }
 			}
 		}
     }

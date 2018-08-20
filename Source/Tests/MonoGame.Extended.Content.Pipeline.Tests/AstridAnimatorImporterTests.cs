@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using MonoGame.Extended.Content.Pipeline.Animations;
 using Xunit;
 
