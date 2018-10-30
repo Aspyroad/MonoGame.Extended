@@ -94,7 +94,9 @@ namespace Tweening
             if (mouseState.IsButtonDown(MouseButton.Left))
             {
                 _tweener.TweenTo(this, a => a.Linear, mouseState.Position.ToVector2(), 1.0f)
-                    .Easing(EasingFunctions.QuadraticOut);
+                        .Easing(EasingFunctions.QuadraticOut);
+                _tweener.TweenTo(this, a => a.Quadratic, mouseState.Position.ToVector2(), 1.0f)
+                                        .Easing(EasingFunctions.BounceIn);
             }
 
             _tweener.Update(elapsedSeconds);

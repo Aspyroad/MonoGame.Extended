@@ -24,6 +24,9 @@ namespace MonoGame.Extended.NuclexGui.Controls
         /// <summary>Whether any keys, mouse buttons or game pad buttons are beind held pressed</summary>
         private bool AnyKeysOrButtonsPressed => (_heldMouseButtons != 0) || (_heldKeyCount > 0) || (_heldButtonCount > 0);
 
+        /// <summary>Control the user touch is currently hovering over</summary>
+        private GuiControl _touchOverControl;
+
         /// <summary>Called when a button on the game pad has been pressed</summary>
         /// <param name="button">Button that has been pressed</param>
         /// <returns>
@@ -339,6 +342,231 @@ namespace MonoGame.Extended.NuclexGui.Controls
             OnMouseWheel(ticks);
         }
 
+        /// <summary>
+        ///     Called when the touch started event is fired.
+        /// </summary>
+        internal void ProcessTouchStarted(float containerWidth, float containerHeight, float x, float y)
+        {
+            // Calculate the absolute pixel position and size of this control
+            var size = Bounds.Size.ToOffset(containerWidth, containerHeight);
+            ////TODO: Some weird shit going onm here.
+
+            x -= Bounds.Location.X.ToOffset(containerWidth);
+            y -= Bounds.Location.Y.ToOffset(containerHeight);
+
+            // Check whether a user is touching one of our children and if so,
+            // pass on the touch notification to the child.
+            foreach (var control in _children)
+            {
+                var childBounds = control.Bounds.ToOffset(size.X, size.Y);
+
+                // Is this child being touched (that sounds soooo wrong)?
+                if (childBounds.Contains(new Point2(x, y)))
+                {
+                    SwitchTouchOverControl(control, x, y);
+
+                    // Hand over the touch data to the child control the touch is
+                    // over.
+                    if ((_touchOverControl != _activatedControl))
+                    {
+                        _touchOverControl.ProcessTouchStarted(size.X, size.Y, x, y);
+                    }
+
+                    // We got our touched control, end processing.
+                    return;
+                }
+            }
+
+            // We remember the control that was touched and won't replace it for
+            // as long as the control is touched.
+            if (_activatedControl == null && _touchOverControl != null)
+            {
+                _activatedControl = _touchOverControl;
+
+                // If we're a control that can appear on top of or below our siblings in
+                // the z order, bring us into foreground since the user just clicked on us.
+                if (_activatedControl != this)
+                {
+                    if (_activatedControl._affectsOrdering)
+                        _children.MoveToStart(_children.IndexOf(_activatedControl));
+                }
+            }
+
+            // Add the buttons to the list of mouse buttons being held down. This is used
+            // to track when we should clear the mouse-over control again.
+            //_heldMouseButtons |= button;
+
+            // If the mouse is over another control, pass on the mouse press.
+            if (_activatedControl != null)
+            {
+                if (_activatedControl != this)
+                {
+                    _activatedControl.ProcessTouchStarted(size.X, size.Y, x, y);
+                }
+                // Otherwise, the mouse press applies to us
+            }
+
+            // If this control can take the input focus, make it the focused control
+            if (_screen != null)
+            {
+                var focusable = this as IFocusable;
+                if ((focusable != null) && focusable.CanGetFocus)
+                    _screen.FocusedControl = this;
+            }
+
+            // Deliver the notification to the control deriving from us
+            OnTouchStarted(x, y);
+
+
+
+
+            //// We can only drag Windows, nothing else via touch.
+            //// 1. Check that the control is a Window
+            //// 2. Set the current touch location in the draggable control so we can extract deltas during move events
+
+            //// Calculate the absolute pixel position and size of this control
+            //var size = Bounds.Size.ToOffset(containerWidth, containerHeight);
+
+            //foreach (var control in _children)
+            //{
+            //    var childBounds = control.Bounds.ToOffset(size.X, size.Y);
+
+            //    // Is the mouse over this child?
+            //    if (childBounds.Contains(new Point2(x, y)))
+            //    {
+            //        // We only drag Windows
+            //        if (control.GetType() == typeof(GuiWindowControl))
+            //        {
+            //            control.OnTouchStarted(x, y);
+            //        }
+
+            //    }
+            //}
+        }
+
+        /// <summary>
+        ///     Called when the touch moved event is fired.
+        /// </summary>
+        internal void ProcessTouchMoved(float containerWidth, float containerHeight, float x, float y)
+        {
+            float touchX;
+            float touchY;
+            // Calculate the absolute pixel position and size of this control
+            var size = Bounds.Size.ToOffset(containerWidth, containerHeight);
+
+            // If a mouse button is being held down, the mouse movement notification is
+            // delivered to the control the mouse was pressed on first. This guarantees that
+            // windows can be dragged even if the mouse was close to the window border and
+            // leaves the window during dragging.
+
+            if (_activatedControl != null)
+            {
+                touchX = x - Bounds.Location.X.ToOffset(containerWidth);
+                touchY = y - Bounds.Location.Y.ToOffset(containerHeight);
+
+                // Deliver the mouse move notifcation (either to our own user code or
+                // to the control the mouse of hovering over)
+                if (_activatedControl != this)
+                {
+                    _activatedControl.ProcessTouchMoved(size.X, size.Y, touchX, touchY);
+                }
+                else
+                {
+                    OnTouchMoved(touchX, touchY);
+                }
+            }
+
+            //// Calculate the absolute mouse position. We cannot reuse the value calculated
+            //// in the mouse-press handling code because the control could have been moved when
+            //// we called OnMouseMoved() - a typical use case for draggable controls.
+
+            ////TODO: Some weird shit going onm here.
+            touchX = x - Bounds.Location.X.ToOffset(containerWidth);
+            touchY = y - Bounds.Location.Y.ToOffset(containerHeight);
+            var ParentX = x;
+            var ParentY = y;
+            x -= Bounds.Location.X.ToOffset(containerWidth);
+            y -= Bounds.Location.Y.ToOffset(containerHeight);
+
+            // Check whether the mouse is hovering over one of our children and if so,
+            // pass on the mouse movement notification to the child.
+            foreach (var control in _children)
+            {
+                var childBounds = control.Bounds.ToOffset(size.X, size.Y);
+
+                // Is the mouse over this child?
+                if (childBounds.Contains(new Point2(x, y)))
+                {
+                    SwitchTouchOverControl(control, x, y);
+
+                    // Hand over the touch movement data to the child control our touch 
+                    // hovering over. If this is the tap gesture (mouse button) control, do nothing because
+                    // we already delivered the movement notification out of order.
+                    if ((_touchOverControl != _activatedControl))
+                        _touchOverControl.ProcessTouchMoved(size.X, size.Y, x, y);
+
+                    // We got our mouse-over control, end processing.
+                    return;
+                }
+            }
+
+            // The touch was over none of our children, so it must be touching us,
+            // unless we're the control being pressed down, in which case we'd also be
+            // getting mouse movement data outside of our boundaries. In this case, we
+            // only should become the touch-over control.
+            if ((x >= 0.0f) && (x < size.X) && (y >= 0.0f) && (y < size.Y))
+            {
+                SwitchTouchOverControl(this, x, y);
+
+                // If we weren't pressed, we didn't deliver the out-of-order update to
+                // our implementation. Send our implementation a normal ordered update.
+                if (_activatedControl == null)
+                {
+                    // This shouldnt be called if its going to move the child outside the 
+                    // bounds of its parent.
+                    OnTouchMoved(x, y);
+                }
+            }
+            else
+            {
+                // redundant - our parent handles this - but convenient for unit tests
+                ProcessTouchEnded(x, y);
+            }
+        }
+
+        /// <summary>
+        ///     Called when the touch ended event is fired.
+        /// </summary>
+        internal void ProcessTouchEnded(float x, float y)
+        {
+            // Similar to Mouse leaving the control
+            if (_touchOverControl != null)
+            {
+                if (_touchOverControl != this)
+                {
+                    _touchOverControl.ProcessTouchEnded(x, y);
+                }
+                else
+                {
+                    OnTouchEnded(x, y);
+                }
+                _touchOverControl = null;
+            }
+
+            // Similar to Mouse Button Release
+            if (_activatedControl != null)
+            {
+                if (_activatedControl != this)
+                {
+                    _activatedControl.ProcessTouchEnded(x, y);
+                }
+                else
+                {
+                    OnTouchEnded(x, y);
+                }
+            }
+        }
+
         /// <summary>Called when a key on the keyboard has been pressed down</summary>
         /// <param name="keyCode">Code of the key that was pressed</param>
         /// <param name="repetition">Whether the key press is due to the user holding down a key</param>
@@ -454,6 +682,24 @@ namespace MonoGame.Extended.NuclexGui.Controls
 
                 // Inform the new mouse-over control that the mouse is now over it
                 newMouseOverControl.OnMouseEntered();
+            }
+        }
+
+        private void SwitchTouchOverControl(GuiControl newTouchOverControl, float x, float y)
+        {
+            if (_touchOverControl != newTouchOverControl)
+            {
+                // Tell the previous touch-over control that the user touch is no longer
+                // hovering over it
+                if (_touchOverControl != null)
+                {
+                    _touchOverControl.ProcessTouchEnded(x, y);
+                }
+
+                _touchOverControl = newTouchOverControl;
+
+                // Inform the new touch-over control that the user touch is now over it
+                newTouchOverControl.OnTouchEntered();
             }
         }
     }

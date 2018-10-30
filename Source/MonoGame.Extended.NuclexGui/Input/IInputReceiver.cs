@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using MonoGame.Extended.Input;
 using MonoGame.Extended.Input.InputListeners;
 
@@ -79,5 +80,28 @@ namespace MonoGame.Extended.NuclexGui.Input
         /// <summary>Handle user text input by a physical or virtual keyboard</summary>
         /// <param name="character">Character that has been entered</param>
         void InjectCharacter(char character);
+
+        /// <summary>Injects a TouchStart position update into the receiver</summary>
+        /// <param name="x">New X coordinate of the TouchStart point on the screen</param>
+        /// <param name="y">New Y coordinate of the TouchStart point on the screen</param>
+        void InjectTouchStarted(float x, float y);
+
+        /// <summary>Injects a TouchMove position update into the receiver</summary>
+        /// <param name="x">New X coordinate of the TouchMove point on the screen</param>
+        /// <param name="y">New Y coordinate of the TouchMove point on the screen</param>
+        void InjectTouchMoved(float x, float y);
+
+        /// <summary>Injects a TouchEnded position update into the receiver</summary>
+        /// <param name="x">New X coordinate of the TouchEnded point on the screen</param>
+        /// <param name="y">New Y coordinate of the TouchEnded point on the screen</param>
+        void InjectTouchEnded(float x, float y);
+
+        /// <summary>Called when a TapGesture is recognised</summary>
+        /// <param name="gesture">TapGesture object returned by MonoGame/iOS</param>
+        void InjectTapGesture(GestureSample gesture);
+
+        /// <summary>Called when a HoldGesture is recognised</summary>
+        /// <param name="gesture">HoldGesture object returned by MonoGame/iOS</param>
+        //void InjectHoldGesture(GestureSample gesture);
     }
 }

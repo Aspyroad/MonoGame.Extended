@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
   <PropertyGroup>
     <Authors>craftworkgames</Authors>
     <Description>An event based input system to MonoGame more awesome.</Description>
@@ -12,11 +11,9 @@
     <PackageLicenseUrl>https://github.com/craftworkgames/MonoGame.Extended/blob/master/LICENSE</PackageLicenseUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/craftworkgames/MonoGame.Extended/master/Logos/logo-nuget-128.png</PackageIconUrl>
   </PropertyGroup>
-
   <PropertyGroup>
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.Portable" Version="3.6.0.1625" PrivateAssets="All" />
     <ProjectReference Include="..\MonoGame.Extended\MonoGame.Extended.csproj" />

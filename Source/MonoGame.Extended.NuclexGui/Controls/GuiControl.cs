@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using MonoGame.Extended.Input.InputListeners;
 using MonoGame.Extended.NuclexGui.Input;
 
@@ -44,6 +45,9 @@ namespace MonoGame.Extended.NuclexGui.Controls
 
         /// <summary>GUI instance this control has been added to. Can be null.</summary>
         private GuiScreen _screen;
+
+        /// <summary>Whether the control can be dragged</summary>
+        protected bool _collisionParentScreen;
 
         /// <summary>Initializes a new control</summary>
         public GuiControl() : this(false)
@@ -269,6 +273,49 @@ namespace MonoGame.Extended.NuclexGui.Controls
         protected virtual void OnMouseWheel(float ticks)
         {
         }
+
+        //--TouchRoutines-----------------------------------------
+
+        /// <summary>Called when a TouchStarted has entered the control and is  hovering over it</summary>
+        /// <param name="x">X coordinate of the TouchEnded on the control</param>
+        /// <param name="y">Y coordinate of the TouchEnded on the control</param>
+        protected virtual void OnTouchStarted(float x, float y)
+        {
+        }
+
+        /// <summary>Called when a TouchMoved has entered the control and is  hovering over it</summary>
+        /// <param name="x">X coordinate of the TouchEnded on the control</param>
+        /// <param name="y">Y coordinate of the TouchEnded on the control</param>
+        protected virtual void OnTouchMoved(float x, float y)
+        {
+        }
+
+        /// <summary>Called when the TouchEnded position is updated</summary>
+        /// <param name="x">X coordinate of the TouchEnded on the control</param>
+        /// <param name="y">Y coordinate of the TouchEnded on the control</param>
+        protected virtual void OnTouchEnded(float x, float y)
+        {
+        }
+
+        /// <summary>Called when a TapGesture is recognised</summary>
+        /// <returns>Whether the control has processed the TapGesture</returns>
+        /// <remarks>
+        ///     If this method states that a TapGesture is processed by returning
+        ///     true, that means the control did something with it and the TapGesture
+        ///     should not be acted upon by any other listener.
+        /// </remarks>
+        protected virtual void OnTapGesture(GestureSample gesture)
+        {
+        }
+
+        /// <summary>
+        ///     Called when touch has entered the control and is now hovering over it
+        /// </summary>
+        protected virtual void OnTouchEntered()
+        {
+        }
+
+        //-------------------------------------------------------
 
         /// <summary>Called when a key on the keyboard has been pressed down</summary>
         /// <param name="keyCode">Code of the key that was pressed</param>

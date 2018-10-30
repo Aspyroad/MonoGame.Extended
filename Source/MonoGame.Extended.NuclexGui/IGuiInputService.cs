@@ -8,6 +8,7 @@ namespace MonoGame.Extended.NuclexGui
         MouseListener MouseListener { get; }
         GamePadListener GamePadListener { get; }
         TouchListener TouchListener { get; }
+        TouchGestureListener TouchGestureListener { get; }
     }
 
     public class GuiInputService : IGuiInputService
@@ -18,11 +19,13 @@ namespace MonoGame.Extended.NuclexGui
             inputListener.Listeners.Add(MouseListener = new MouseListener());
             inputListener.Listeners.Add(GamePadListener = new GamePadListener());
             inputListener.Listeners.Add(TouchListener = new TouchListener());
+            inputListener.Listeners.Add(TouchGestureListener = new TouchGestureListener());
         }
 
         public KeyboardListener KeyboardListener { get; }
         public MouseListener MouseListener { get; }
         public GamePadListener GamePadListener { get; }
         public TouchListener TouchListener { get; }
+        public TouchGestureListener TouchGestureListener { get; }
     }
 }

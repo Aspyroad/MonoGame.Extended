@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using MonoGame.Extended.Input;
 using MonoGame.Extended.Input.InputListeners;
 
@@ -22,6 +23,8 @@ namespace MonoGame.Extended.NuclexGui.Input
 
         private readonly KeyboardListener _keyboardListener;
         private readonly MouseListener _mouseListener;
+        private readonly TouchListener _touchListener;
+        private readonly TouchGestureListener _touchGestureListener;
 
         /// <summary>Initializes a new input capturer, taking the input service from a service provider</summary>
         /// <param name="serviceProvider">Service provider the input capturer will take the input service from</param>
@@ -39,6 +42,8 @@ namespace MonoGame.Extended.NuclexGui.Input
             _keyboardListener = inputService.KeyboardListener;
             _mouseListener = inputService.MouseListener;
             _gamePadListener = inputService.GamePadListener;
+            _touchListener = inputService.TouchListener;
+            _touchGestureListener = inputService.TouchGestureListener;
 
             SubscribeInputDevices();
         }
@@ -104,6 +109,14 @@ namespace MonoGame.Extended.NuclexGui.Input
 
             _gamePadListener.ButtonDown += GamePadListener_ButtonDown;
             _gamePadListener.ButtonUp += GamePadListener_ButtonUp;
+
+            _touchListener.TouchStarted += TouchListener_TouchStarted;
+            _touchListener.TouchMoved += TouchListener_TouchMoved;
+            _touchListener.TouchEnded += TouchListener_TouchEnded;
+            //_touchListener.TouchCancelled += TouchListener_TouchCancelled;
+
+            _touchGestureListener.Tap += TouchGestureListener_Tap;
+            //_touchGestureListener.Hold += TouchGestureListener_Hold;
         }
 
         private void UnsubscribeInputDevices()
@@ -119,6 +132,14 @@ namespace MonoGame.Extended.NuclexGui.Input
 
             _gamePadListener.ButtonDown -= GamePadListener_ButtonDown;
             _gamePadListener.ButtonUp -= GamePadListener_ButtonUp;
+
+            _touchListener.TouchStarted -= TouchListener_TouchStarted;
+            _touchListener.TouchMoved -= TouchListener_TouchMoved;
+            _touchListener.TouchEnded -= TouchListener_TouchEnded;
+            //_touchListener.TouchCancelled -= TouchListener_TouchCancelled;
+
+            _touchGestureListener.Tap -= TouchGestureListener_Tap;
+            //_touchGestureListener.Hold -= TouchGestureListener_Hold;
         }
 
         private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
@@ -182,6 +203,46 @@ namespace MonoGame.Extended.NuclexGui.Input
         private void GamePadListener_ButtonUp(object sender, GamePadEventArgs e)
         {
             _inputReceiver.InjectButtonRelease(e.Button);
+        }
+
+        private void TouchListener_TouchStarted(object sender, TouchEventArgs e)
+        {
+            //Debug.WriteLine("Started - x = " + e.Position.X.ToString() + " y = " + e.Position.Y.ToString());
+            _inputReceiver.InjectTouchStarted(e.StartPosition.X, e.StartPosition.Y);
+        }
+
+        private void TouchListener_TouchMoved(object sender, TouchEventArgs e)
+        {
+            //Debug.WriteLine("Moved - x = " + e.Position.X.ToString() + " y = " + e.Position.Y.ToString());
+            _inputReceiver.InjectTouchMoved(e.Position.X, e.Position.Y);
+        }
+
+        private void TouchListener_TouchEnded(object sender, TouchEventArgs e)
+        {
+            //Debug.WriteLine("Ended - x = " + e.Position.X.ToString() + " y = " + e.Position.Y.ToString());
+            _inputReceiver.InjectTouchEnded(e.Position.X, e.Position.Y);
+        }
+
+        private void TouchListener_TouchCancelled(object sender, TouchEventArgs e)
+        {
+        }
+
+        private void TouchGestureListener_Tap(object source, TouchGestureEventArgs e)
+        {
+            // Simulate a mouse left button press/release
+            // First inject a move event to place the control in activated state
+            // If there was no mouse move first (very possible with a tap gesture)
+            // We must place the tablets (virtual) cursor over the control
+            _inputReceiver.InjectMouseMove(e.Gesture.Position.X, e.Gesture.Position.Y);
+            // Press AND release, there are (obviously) no gestures for a Tap release.
+            // This is all one process
+            _inputReceiver.InjectMousePress(MouseButton.Left);
+            _inputReceiver.InjectMouseRelease(MouseButton.Left);
+
+        }
+
+        private void TouchGestureListener_Hold(object source, TouchGestureEventArgs e)
+        {
         }
 
         /// <summary>Retrieves the input service from a service provider</summary>
@@ -271,6 +332,39 @@ namespace MonoGame.Extended.NuclexGui.Input
             /// <summary>Handle user text input by a physical or virtual keyboard</summary>
             /// <param name="character">Character that has been entered</param>
             public void InjectCharacter(char character)
+            {
+            }
+
+            /// <summary>Injects a TouchStart position update into the receiver</summary>
+            /// <param name="x">New X coordinate of the TouchStart point on the screen</param>
+            /// <param name="y">New Y coordinate of the TouchStart point on the screen</param>
+            public void InjectTouchStarted(float x, float y)
+            {
+            }
+
+            /// <summary>Injects a TouchMoved position update into the receiver</summary>
+            /// <param name="x">New X coordinate of the TouchMoved point on the screen</param>
+            /// <param name="y">New Y coordinate of the TouchMoved point on the screen</param>
+            public void InjectTouchMoved(float x, float y)
+            {
+            }
+
+            /// <summary>Injects a TouchEnded position update into the receiver</summary>
+            /// <param name="x">New X coordinate of the TouchEnded point on the screen</param>
+            /// <param name="y">New Y coordinate of the TouchEnded point on the screen</param>
+            public void InjectTouchEnded(float x, float y)
+            {
+            }
+
+            /// <summary>Called when a TapGesture is recognised</summary>
+            /// <param name="gesture">TapGesture object returned by MonoGame/iOS</param>
+            public void InjectTapGesture(GestureSample gesture)
+            {
+            }
+
+            /// <summary>Called when a TapGesture is recognised</summary>
+            /// <param name="gesture">TapGesture object returned by MonoGame/iOS</param>
+            public void InjectHoldGesture(GestureSample gesture)
             {
             }
         }

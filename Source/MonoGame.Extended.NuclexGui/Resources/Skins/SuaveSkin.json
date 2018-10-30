@@ -4,33 +4,33 @@
     "font": [
       {
         "name": "title",
-        "contentPath": "TitleFont"
+        "contentPath": "NuclexSkin/TitleFont"
       },
       {
         "name": "default",
-        "contentPath": "DefaultFont"
+        "contentPath": "NuclexSkin/DefaultFont"
       },
       {
         "name": "heading1",
-        "contentPath": "Fonts/Heading1"
+        "contentPath": "NuclexSkin/Heading1"
       },
       {
         "name": "heading2",
-        "contentPath": "Fonts/Heading2"
+        "contentPath": "NuclexSkin/Heading2"
       },
       {
         "name": "heading3",
-        "contentPath": "Fonts/Heading3"
+        "contentPath": "NuclexSkin/Heading3"
       },
       {
         "name": "label-title",
-        "contentPath": "Fonts/Title"
+        "contentPath": "NuclexSkin/Title"
       }
     ],
     "bitmap": [
       {
         "name": "controls",
-        "contentPath": "SuaveSheet"
+        "contentPath": "NuclexSkin/DefaultSkin"
       }
     ]
   },

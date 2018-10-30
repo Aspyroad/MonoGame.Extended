@@ -24,8 +24,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Skins\SuaveSkin.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Remove="Resources\Skins\SuaveSkin.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\Skins\SuaveSkin.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Skins\SuaveSkin.json" />
   </ItemGroup>
 </Project>

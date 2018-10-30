@@ -31,7 +31,7 @@ namespace Sandbox.Systems
         public void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin();
-            _spriteBatch.FillRectangle(0, 0, 800, 20, Color.Black * 0.4f);
+            _spriteBatch.FillRectangle(0, 0, 800, 20, Color.Black * 0.8f);
             _spriteBatch.DrawString(_font, $"entities: {_world.EntityCount}", Vector2.One, Color.White);
             _spriteBatch.End();
         }

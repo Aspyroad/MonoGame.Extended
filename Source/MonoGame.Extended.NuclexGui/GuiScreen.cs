@@ -2,6 +2,7 @@
 using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using MonoGame.Extended.Input;
 using MonoGame.Extended.Input.InputListeners;
 using MonoGame.Extended.NuclexGui.Controls;
@@ -469,6 +470,38 @@ namespace MonoGame.Extended.NuclexGui
                 _activatedControl.ProcessMouseWheel(ticks);
             else
                 _desktopControl.ProcessMouseWheel(ticks);
+        }
+
+        /// <summary>Injects a TouchStarted position update into the receiver</summary>
+        /// <param name="x">New X coordinate of the TouchStarted point on the screen</param>
+        /// <param name="y">New Y coordinate of the TouchStarted point on the screen</param>
+        public void InjectTouchStarted(float x, float y)
+        {
+            _desktopControl.ProcessTouchStarted(_size.X, _size.Y, x, y);
+        }
+
+        /// <summary>Injects a TouchMoved position update into the receiver</summary>
+        /// <param name="x">New X coordinate of the TouchMoved point on the screen</param>
+        /// <param name="y">New Y coordinate of the TouchMoved point on the screen</param>
+        public void InjectTouchMoved(float x, float y)
+        {
+            _desktopControl.ProcessTouchMoved(_size.X, _size.Y, x, y);
+        }
+
+        /// <summary>Injects a TouchEnded position update into the receiver</summary>
+        /// <param name="x">New X coordinate of the TouchEnded point on the screen</param>
+        /// <param name="y">New Y coordinate of the TouchEnded point on the screen</param>
+        public void InjectTouchEnded(float x, float y)
+        {
+            _desktopControl.ProcessTouchEnded(x, y);
+        }
+
+        /// <summary>Called when a TapGesture is recognised</summary>
+        /// <param name="gesture">TapGesture object returned by MonoGame</param>
+        public void InjectTapGesture(GestureSample gesture)
+        {
+            //_desktopControl.ProcessTapGesture(gesture);
+            this.InjectMousePress(MouseButton.Left);
         }
 
         /// <summary>Triggered when the control in focus changes</summary>

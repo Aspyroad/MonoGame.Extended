@@ -38,7 +38,7 @@ namespace Sandbox.Systems
                 var transform = _transformMapper.Get(entityId);
                 var raindrop = _raindropMapper.Get(entityId);
 
-                raindrop.Velocity += new Vector2(0, 500) * elapsedSeconds;
+                raindrop.Velocity += new Vector2(0, 10) * elapsedSeconds;
                 transform.Position += raindrop.Velocity * elapsedSeconds;
 
                 if (transform.Position.Y >= 480 && !_expiryMapper.Has(entityId))

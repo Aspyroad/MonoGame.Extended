@@ -35,7 +35,7 @@ namespace Gui
             var viewportAdapter = new DefaultViewportAdapter(GraphicsDevice);
             var guiRenderer = new GuiSpriteBatchRenderer(GraphicsDevice, () => Matrix.Identity);
             var font = Content.Load<BitmapFont>("Sensation");
-            BitmapFont.UseKernings = false;
+            BitmapFont.UseKernings = true;
             Skin.CreateDefault(font);
 
             var stackTest = new DemoViewModel("Stack Panels",

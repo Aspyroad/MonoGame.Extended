@@ -7,19 +7,20 @@ namespace MonoGame.Extended.Input.InputListeners
 {
     public class TouchEventArgs : EventArgs
     {
-        public TouchEventArgs(ViewportAdapter viewportAdapter, TimeSpan time, TouchLocation location)
+        public TouchEventArgs(ViewportAdapter viewportAdapter, TimeSpan time, TouchLocation location, TouchLocation startlocation)
         {
             ViewportAdapter = viewportAdapter;
             RawTouchLocation = location;
             Time = time;
-            Position = viewportAdapter?.PointToScreen((int)location.Position.X, (int)location.Position.Y)
-                ?? location.Position.ToPoint();
+            Position = location.Position.ToPoint();
+            StartPosition = startlocation.Position.ToPoint();
         }
 
         public ViewportAdapter ViewportAdapter { get; }
         public TouchLocation RawTouchLocation { get; }
         public TimeSpan Time { get; }
         public Point Position { get; }
+        public Point StartPosition { get; }
 
         public override bool Equals(object other)
         {

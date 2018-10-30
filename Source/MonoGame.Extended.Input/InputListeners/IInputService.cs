@@ -9,5 +9,7 @@
         GamePadListener GuiGamePadListener { get; }
 
         TouchListener GuiTouchListener { get; }
+
+        TouchGestureListener GuiTouchGestureListener { get; }
     }
 }
