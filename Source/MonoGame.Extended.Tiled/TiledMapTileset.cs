@@ -22,7 +22,6 @@ namespace MonoGame.Extended.Tiled
 
         public string Name => Texture.Name;
         public Texture2D Texture { get; }
-        //public int FirstGlobalIdentifier { get; internal set; }
         public int TileWidth { get; }
         public int TileHeight { get; }
         public int Spacing { get; }
@@ -32,22 +31,13 @@ namespace MonoGame.Extended.Tiled
         public List<TiledMapTilesetTile> Tiles { get; }
         public TiledMapProperties Properties { get; }
 
+        public int Rows => (int)Math.Ceiling((double) TileCount / Columns);
+        public int ActualWidth => TileWidth * Columns;
+        public int ActualHeight => TileHeight * Rows;
+
         public Rectangle GetTileRegion(int localTileIdentifier)
         {
             return TiledMapHelper.GetTileSourceRectangle(localTileIdentifier, TileWidth, TileHeight, Columns, Margin, Spacing);
         }
-
-        //public TiledMapTilesetAnimatedTile GetAnimatedTilesetTileByLocalTileIdentifier(int localTileIdentifier)
-        //{
-        //    throw new NotImplementedException();
-        //    //TiledMapTilesetAnimatedTile animatedTile;
-        //    //_animatedTilesByLocalTileIdentifier.TryGetValue(localTileIdentifier, out animatedTile);
-        //    //return animatedTile;
-        //}
-
-        //public bool ContainsGlobalIdentifier(int globalIdentifier)
-        //{
-        //    return globalIdentifier >= FirstGlobalIdentifier && globalIdentifier < FirstGlobalIdentifier + TileCount;
-        //}
     }
 }
